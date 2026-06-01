@@ -1,6 +1,6 @@
 ---
 name: yeoboya-finish-work
-description: "Use ONLY when yeoboya-continue-work triggers this skill as the final stage. NEVER invoke directly. Verifies git log commit-pattern compliance, confirms all NOTION_STAGES are published, prints a closing report, sets progress.stages.finish-work.status=done. No Notion publish."
+description: "Use ONLY when yeoboya-continue-work triggers this skill as the final stage. NEVER invoke directly. Verifies git log commit-pattern compliance, confirms all NOTION_STAGES are published, calls publish-notion for 작업 상태 state-transition to 완료 and toggles workspace.platform-matching iOS_완료/Android_완료 boolean on the task DB row, prints a closing report, sets progress.stages.finish-work.status=done. Does not publish new pages."
 user-invocable: false
 ---
 
