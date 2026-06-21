@@ -2,6 +2,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
+const { resolveKey, KEY_TO_TITLE } = require('./notion');
 
 function workspacePath(root) {
   return path.join(root, '.workflow', 'workspace.json');
@@ -63,19 +64,42 @@ function safeWriteWork(root, work, data) {
   }
 }
 
+function isMultiKey(key) {
+  const titles = KEY_TO_TITLE[key];
+  return Array.isArray(titles) && titles.length > 1;
+}
+
+function setLink(links, key, pageId, multiTitle) {
+  if (!multiTitle) {
+    links[key] = pageId;
+    return;
+  }
+  const existing = (links[key] && typeof links[key] === 'object') ? links[key] : {};
+  existing[multiTitle] = pageId;
+  links[key] = existing;
+}
+
 function recordLink(root, work, key, notionPageId, multi) {
   const w = readWork(root, work);
   if (!w) return false;
   w.links = w.links || {};
-  if (!multi || !multi.title) {
-    w.links[key] = notionPageId;
-    return safeWriteWork(root, work, w);
-  }
-  const existing = w.links[key];
-  const map = (existing && typeof existing === 'object') ? existing : {};
-  map[multi.title] = notionPageId;
-  w.links[key] = map;
+  setLink(w.links, key, notionPageId, multi && multi.title);
   return safeWriteWork(root, work, w);
 }
 
-module.exports = { readActiveWork, readWork, recordLink };
+function syncLinks(root, work, children) {
+  const w = readWork(root, work);
+  if (!w) return null;
+  w.links = w.links || {};
+  const list = Array.isArray(children) ? children : [];
+  for (const c of list) {
+    if (!c || typeof c.id !== 'string' || !c.id) continue;
+    const title = typeof c.title === 'string' ? c.title : '';
+    const key = resolveKey(title);
+    if (!key) continue;
+    setLink(w.links, key, c.id, isMultiKey(key) ? title.trim() : null);
+  }
+  return safeWriteWork(root, work, w) ? w.links : null;
+}
+
+module.exports = { readActiveWork, readWork, recordLink, syncLinks };

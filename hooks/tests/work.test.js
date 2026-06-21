@@ -66,3 +66,58 @@ test('recordLink multi-page accumulates { title: pageId }', () => {
   const after = JSON.parse(fs.readFileSync(f, 'utf8'));
   assert.deepEqual(after.links['draw-data-flow'], { '데이터 흐름도': 'p-1', '통신 명세서': 'p-2' });
 });
+
+test('syncLinks maps child titles to keys and writes links', () => {
+  const root = tmpRoot();
+  const f = workFile(root, 'DCL-2');
+  fs.mkdirSync(path.dirname(f), { recursive: true });
+  fs.writeFileSync(f, JSON.stringify({ work: 'DCL-2', links: {} }));
+  const links = work.syncLinks(root, 'DCL-2', [
+    { title: '정책서', id: 'p-pol' },
+    { title: 'UI 흐름도', id: 'p-ui' },
+  ]);
+  assert.equal(links['write-policy'], 'p-pol');
+  assert.equal(links['draw-ui-flow'], 'p-ui');
+  const after = JSON.parse(fs.readFileSync(f, 'utf8'));
+  assert.equal(after.links['write-policy'], 'p-pol');
+});
+
+test('syncLinks accumulates multi-page draw-data-flow', () => {
+  const root = tmpRoot();
+  const f = workFile(root, 'DCL-3');
+  fs.mkdirSync(path.dirname(f), { recursive: true });
+  fs.writeFileSync(f, JSON.stringify({ work: 'DCL-3', links: {} }));
+  const links = work.syncLinks(root, 'DCL-3', [
+    { title: '데이터 흐름도', id: 'p-df' },
+    { title: '통신 명세서', id: 'p-cs' },
+  ]);
+  assert.deepEqual(links['draw-data-flow'], { '데이터 흐름도': 'p-df', '통신 명세서': 'p-cs' });
+});
+
+test('syncLinks preserves unmatched existing keys and skips unknown titles', () => {
+  const root = tmpRoot();
+  const f = workFile(root, 'DCL-4');
+  fs.mkdirSync(path.dirname(f), { recursive: true });
+  fs.writeFileSync(f, JSON.stringify({ work: 'DCL-4', links: { 'write-qa': 'p-qa' } }));
+  const links = work.syncLinks(root, 'DCL-4', [
+    { title: '정책서', id: 'p-pol' },
+    { title: '엉뚱한 제목', id: 'p-x' },
+  ]);
+  assert.equal(links['write-qa'], 'p-qa');
+  assert.equal(links['write-policy'], 'p-pol');
+  assert.equal(links['엉뚱한 제목'], undefined);
+});
+
+test('syncLinks returns null when work.json absent', () => {
+  assert.equal(work.syncLinks(tmpRoot(), 'DCL-X', [{ title: '정책서', id: 'p' }]), null);
+});
+
+test('syncLinks ignores children without id', () => {
+  const root = tmpRoot();
+  const f = workFile(root, 'DCL-5');
+  fs.mkdirSync(path.dirname(f), { recursive: true });
+  fs.writeFileSync(f, JSON.stringify({ work: 'DCL-5', links: {} }));
+  const links = work.syncLinks(root, 'DCL-5', [{ title: '정책서' }, { title: 'UI 흐름도', id: 'p-ui' }]);
+  assert.equal(links['write-policy'], undefined);
+  assert.equal(links['draw-ui-flow'], 'p-ui');
+});
