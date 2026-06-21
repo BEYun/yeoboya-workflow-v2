@@ -56,7 +56,6 @@ yeoboya-publish-notion 호출:
   work: <작업번호>
   mode: "dispatch"
   key: "draw-ui-flow"
-  title: "UI 흐름도"
   markdown: <본문>
 ```
 

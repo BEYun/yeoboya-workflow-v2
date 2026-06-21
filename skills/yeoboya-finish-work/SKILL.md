@@ -41,7 +41,6 @@ yeoboya-publish-notion 호출:
   work: <작업번호>
   mode: "dispatch"
   key: "finish-work"
-  title: ""
   markdown: ""
   properties:
     iOS_완료: true       # workspace.platform === "iOS"일 때만 포함
