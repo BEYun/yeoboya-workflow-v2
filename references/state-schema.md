@@ -10,6 +10,7 @@ This document is the **single source of truth** for state file schemas and share
   "workType": "feature",
   "name": "라이브 방송 검색",
   "referenceWork": "DCL-1230",
+  "reviewDone": false,
   "links": {
     "write-policy":   "abc...",
     "draw-data-flow": { "데이터 흐름도": "p1...", "통신 명세서": "p2..." }
@@ -20,6 +21,7 @@ This document is the **single source of truth** for state file schemas and share
 - `workType` ∈ {`feature`, `update`, `bugfix`} — **라벨 전용. 분기에 쓰지 않는다.**
 - `links`: 실행되어 Notion 페이지가 생긴 항목만 등재(sparse). 단일 페이지 → pageId 문자열, 다중 페이지(draw-data-flow) → `{ "<페이지 제목>": "<pageId>" }`.
 - `referenceWork`: workType이 update이고 사용자가 참고 작업을 선택했을 때만 존재. 라벨 전용.
+- `reviewDone`: `false`로 초기화. `review-code` 완료 시 `true`로 갱신. `finish-work` 진입 유일 하드 선행조건.
 - stages/status 개념 없음. 초기화 시 `links: {}`.
 
 ## 2. `.workflow/<작업번호>/code-phases.json`
