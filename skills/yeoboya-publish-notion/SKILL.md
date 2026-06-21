@@ -1,12 +1,12 @@
 ---
 name: yeoboya-publish-notion
-description: "MANDATORY for any Notion page write or work DB row mutation in yeoboya-workflow. NEVER call `notion-create-pages` or `notion-update-page` directly from a stage skill — invoke this skill first. It handles work DB row upsert (dispatch), workspace-aware property setting, and surfaces the page title that the `notion-page-record` hook needs for the done→published transition. Use when any stage skill (write-policy, write-domain, draw-ui-flow, draw-data-flow, write-qa) needs to publish its deliverable, or when create-work needs to register/sync the work DB row."
+description: "MANDATORY for any Notion page write or work DB row mutation in yeoboya-workflow. NEVER call `notion-create-pages` or `notion-update-page` directly from a 작업목록 skill — invoke this skill first. It handles work DB row upsert (dispatch), workspace-aware property setting, and surfaces the page title that the `notion-page-record` hook needs to record the pageId into work.json.links. Use when any 작업목록 skill (write-policy, write-domain, draw-ui-flow, draw-data-flow, write-qa) needs to publish its deliverable, or when create-work needs to register/sync the work DB row."
 user-invocable: false
 ---
 
 # yeoboya-publish-notion
 
-Notion 쓰기의 단일 진입점. 모든 stage skill은 산출물을 publish할 때 본 skill을 통해 Notion에 쓴다.
+Notion 쓰기의 단일 진입점. 모든 작업목록 skill은 산출물을 publish할 때 본 skill을 통해 Notion에 쓴다.
 
 ## 1. 도구 호출 규약
 
@@ -55,7 +55,7 @@ hook(`notion-page-record`)은 페이지 publish 시 `work.json.links`에 pageId�
 
 `담당자`는 URL 배열.
 
-## 6. 호출자(create-work / stage skills / hook)에게 노출되는 인터페이스
+## 6. 호출자(create-work / 작업목록 skills / hook)에게 노출되는 인터페이스
 
 ```
 yeoboya-publish-notion 호출 파라미터:

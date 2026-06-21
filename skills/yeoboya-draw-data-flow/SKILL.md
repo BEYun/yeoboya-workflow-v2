@@ -11,7 +11,7 @@ user-invocable: false
 ## 1. 전제
 
 - work.json 존재.
-- UI 흐름도(work.json.links['draw-ui-flow'])가 있으면 참고한다. 없으면 사용자에게 알리고 진행 여부를 확인한다.
+- UI 흐름도(work.json.links['draw-ui-flow'])와 도메인 명세서(work.json.links['write-domain'])가 있으면 참고한다. 없으면 사용자에게 알리고 진행 여부를 확인한다.
 
 ## 2. 입력 fetch
 
