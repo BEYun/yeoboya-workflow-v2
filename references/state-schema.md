@@ -87,16 +87,15 @@ WORK_LABELS = {
   "finish-work": "작업 종결"
 }
 
-TITLE_TO_KEY = {
-  "기획서 검토": "write-policy-feedback", "정책서": "write-policy",
-  "도메인 명세서": "write-domain", "UI 흐름도": "draw-ui-flow",
-  "데이터 흐름도": "draw-data-flow", "통신 명세서": "draw-data-flow",
-  "QA 시나리오": "write-qa"
-}
+# TITLE_TO_KEY / KEY_TO_TITLE
+# 런타임 정의: hooks/lib/constants.json (단일 SOT)
+# 변경 시 해당 파일만 수정한다.
 
 WORKTYPE_LABEL = { feature: "신규 개발", update: "변경/고도화", bugfix: "버그 수정" }
 
-CODE_PHASES = ["data", "domain", "presentation"]
+# CODE_PHASES
+# write-code Phase Derivation에서 동적 결정. 고정 상수 없음.
+# 각 작업의 phase 구성은 .workflow/<작업번호>/code-phases.json 참조.
 ```
 
 `TITLE_TO_KEY`는 `notion-page-record` hook에서 페이지 제목 → work-list 키 추론에 쓰인다. `draw-data-flow`는 두 페이지("데이터 흐름도", "통신 명세서")가 같은 키로 매핑되며, 두 페이지(데이터 흐름도/통신 명세서)의 pageId가 `links['draw-data-flow']` 객체에 누적된다.
