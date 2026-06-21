@@ -5,16 +5,8 @@ const NOTION_WRITE_TOOLS = new Set([
   'mcp__claude_ai_Notion__notion-update-page',
 ]);
 
-// Single source of truth for title→work-list-key mapping is references/state-schema.md §4.
-const TITLE_TO_KEY = new Map([
-  ['기획서 검토',     'write-policy-feedback'],
-  ['정책서',         'write-policy'],
-  ['도메인 명세서',   'write-domain'],
-  ['UI 흐름도',       'draw-ui-flow'],
-  ['데이터 흐름도',   'draw-data-flow'],
-  ['통신 명세서',     'draw-data-flow'],
-  ['QA 시나리오',     'write-qa'],
-]);
+const { TITLE_TO_KEY: TITLE_TO_KEY_OBJ, KEY_TO_TITLE } = require('./constants.json');
+const TITLE_TO_KEY = new Map(Object.entries(TITLE_TO_KEY_OBJ));
 
 function resolveKey(title) {
   if (typeof title !== 'string') return undefined;
@@ -72,6 +64,7 @@ function extractPageIds(toolResponse) {
 module.exports = {
   NOTION_WRITE_TOOLS,
   TITLE_TO_KEY,
+  KEY_TO_TITLE,
   resolveKey,
   extractPagesFromInput,
   extractPageIds,
