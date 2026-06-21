@@ -12,6 +12,7 @@ user-invocable: false
 
 - work.json 존재.
 - 기획서 검토 산출물(work.json.links['write-policy-feedback'])이 있으면 입력으로 활용한다. 없으면 사용자에게 알리고 계속 진행할지 확인한다 (강제 종료 없음).
+- **진입 시 sync (필수 첫 동작)**: `yeoboya-publish-notion mode="sync-links"`(work=작업번호)를 1회 호출해 작업 row 자식 페이지를 `work.json.links`에 동기화한다 — (a) 다른 작업자가 만든 선행 문서를 links에서 인식, (b) 본 산출물이 이미 있으면 publish가 update가 되어 중복 페이지 방지.
 
 ## 2. 입력 fetch
 
