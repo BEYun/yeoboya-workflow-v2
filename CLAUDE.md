@@ -29,6 +29,7 @@
 - 작업목록 스킬은 모두 `user-invocable: false`. `route-work`이 Skill 도구로 trigger한다
 - **항목 단위 세션 분리 권장**: 항목 완료 후 새 세션에서 `/yeoboya-route-work` 재호출
 - **write-code 진입 경고**: `route-work`이 write-code trigger 직전 항상 표시되는 단순 경고 게이트를 띄운다 (선행 항목 실행 여부는 검사하지 않음)
+- **finish-work 하드 선행조건**: `work.json.reviewDone === true`일 때만 실행 가능. route-work와 finish-work 양쪽에서 확인. 유일한 하드 선행조건이며 다른 항목에는 선행조건 없음.
 
 ## skill self-validation 원칙
 
@@ -36,4 +37,4 @@
 
 ## 상태/스키마/상수 단일 출처
 
-상태 파일 스키마, 모든 작업목록 키와 라벨 매핑(`WORK_LIST`/`WORK_GROUPS`/`WORK_LABELS`/`TITLE_TO_KEY`) — 전부 `references/state-schema.md`에 있다. skill 본문에 중복 정의 금지.
+상태 파일 스키마, 모든 작업목록 키와 라벨 매핑(`WORK_LIST`/`WORK_GROUPS`/`WORK_LABELS`) — 전부 `references/state-schema.md`에 있다. TITLE_TO_KEY/KEY_TO_TITLE 런타임 정의는 `hooks/lib/constants.json` 참조. skill 본문에 중복 정의 금지.

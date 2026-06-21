@@ -14,18 +14,14 @@ Notion 쓰기의 단일 진입점. 모든 작업목록 skill은 산출물을 pub
 - update 경로: `mcp__claude_ai_Notion__notion-update-page` (기존 pageId가 있을 때)
 - **upsert 규칙**: `work.json.links[<key>]`(다중 페이지는 `links[<key>][<title>]`)가 있으면 update, 없으면 create
 
-## 2. 페이지 제목 규약 (hook이 작업목록 항목 키 추론에 사용)
+## 2. 페이지 제목 결정
 
-| 작업목록 항목 키 | 페이지 제목 |
-|---|---|
-| write-policy-feedback | 기획서 검토 |
-| write-policy | 정책서 |
-| write-domain | 도메인 명세서 |
-| draw-ui-flow | UI 흐름도 |
-| draw-data-flow | 데이터 흐름도 · 통신 명세서 (2 페이지) |
-| write-qa | QA 시나리오 |
+title은 `hooks/lib/constants.json`의 `KEY_TO_TITLE[key]`에서 결정된다.
 
-이 매핑은 `references/state-schema.md §4 TITLE_TO_KEY`와 `references/notion-schema.md` 그리고 hook lib `notion.js`의 `TITLE_TO_KEY`가 일치해야 한다. 변경은 세 곳 동시 갱신 (Phase 1·2의 작업들로 한 번에 처리).
+- 단일 페이지 키(write-policy, write-domain, draw-ui-flow, write-qa 등): 호출자가 `title`을 전달하지 않는다. publish-notion이 `KEY_TO_TITLE[key][0]`을 페이지 제목으로 사용.
+- 다중 페이지 키(draw-data-flow): 호출자가 `title`을 전달한다. `KEY_TO_TITLE["draw-data-flow"]`의 값("데이터 흐름도" 또는 "통신 명세서") 중 하나여야 한다.
+
+`KEY_TO_TITLE`에 없는 key+title 조합은 hook 기록 없이 Notion 페이지만 생성한다 (review-code 등 links 미기록 항목에서 활용).
 
 ## 3. 호출 형태
 
@@ -63,7 +59,7 @@ yeoboya-publish-notion 호출 파라미터:
   mode: "dispatch" | "sync"
   (dispatch만)
     key: "<작업목록 항목 키>"
-    title: "<페이지 제목 — §2 표 참조>"
+    title?: "<draw-data-flow 호출 시만 필수. 다른 key는 생략>"
     markdown: "<페이지 본문>"
     properties?:
       workType?: <feature|update|bugfix>   # WORKTYPE_LABEL로 select 값 변환

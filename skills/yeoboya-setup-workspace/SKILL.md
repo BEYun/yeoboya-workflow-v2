@@ -14,13 +14,13 @@ description: "Use when the user invokes /yeoboya-setup-workspace, when workspace
 | 검증 항목 | 확인 방법 |
 |---|---|
 | superpowers 플러그인 | superpowers의 skill 중 하나(예: `brainstorming`, `writing-plans`)가 available skills에 노출되는지 |
-| Notion MCP | `mcp__claude_ai_Notion__notion-search` 등 Notion MCP 도구가 가용한지 |
+| Notion MCP | `mcp__claude_ai_Notion__notion-search`를 빈 쿼리(`""`)로 실제 호출한다. 응답이 오면(빈 결과라도) 가용. 도구를 찾을 수 없다는 오류가 나면 미설치. |
 
 누락 시 출력 예시:
 ```
 plugin v2는 다음 설치가 필요합니다:
   - superpowers 플러그인 (https://github.com/anthropics/claude-plugins)
-  - Notion MCP (claude.ai 기준)
+  - Notion MCP (notion-search 도구 호출 실패)
 
 설치 후 다시 /yeoboya-setup-workspace를 호출하세요.
 ```

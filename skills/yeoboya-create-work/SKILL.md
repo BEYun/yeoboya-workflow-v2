@@ -63,6 +63,7 @@ description: "Use when the user invokes /yeoboya-create-work <작업번호>, or 
   "workType": "<feature|update|bugfix>",
   "name": "<작업명>",
   "referenceWork": "<update + 선택 시만>",
+  "reviewDone": false,
   "links": {}
 }
 ```
@@ -113,5 +114,6 @@ description: "Use when the user invokes /yeoboya-create-work <작업번호>, or 
 work.json 저장 직전 검증:
 - `work` 필드가 `^[A-Z]+-\d+$` 형식과 일치
 - `workType ∈ {feature, update, bugfix}`
+- `reviewDone`이 `false`와 정확히 일치 (초기화 직후)
 - `links`가 빈 객체 `{}`와 정확히 일치 (deep-equal)
 - `referenceWork`는 workType=update 이고 사용자가 선택한 경우에만 존재

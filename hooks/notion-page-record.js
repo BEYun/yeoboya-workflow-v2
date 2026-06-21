@@ -2,14 +2,14 @@
 'use strict';
 
 const {
-  NOTION_WRITE_TOOLS, resolveKey, extractPagesFromInput, extractPageIds,
+  NOTION_WRITE_TOOLS, resolveKey, extractPagesFromInput, extractPageIds, KEY_TO_TITLE,
 } = require('./lib/notion');
 const { readStdin, allow, log } = require('./lib/hook-runtime');
 const { readActiveWork, recordLink } = require('./lib/work');
 
-const MULTI_PAGE_KEY_TITLES = {
-  'draw-data-flow': ['데이터 흐름도', '통신 명세서'],
-};
+const MULTI_PAGE_KEY_TITLES = Object.fromEntries(
+  Object.entries(KEY_TO_TITLE).filter(([, titles]) => titles.length > 1)
+);
 
 (async () => {
   const root = process.env.DEV_ROOT || process.cwd();

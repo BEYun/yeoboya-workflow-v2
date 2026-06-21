@@ -8,6 +8,18 @@ user-invocable: false
 
 작업 종결 검증 + 보고.
 
+## 0. 선행조건 확인 (필수 첫 단계)
+
+`.workflow/<작업번호>/work.json`을 Read → `reviewDone` 확인.
+
+`reviewDone`이 `false`이거나 필드가 없으면:
+```
+코드 리뷰가 완료되지 않았습니다. 코드 리뷰(review-code)를 먼저 진행해 주세요.
+```
+즉시 종료. 아래 단계를 진행하지 않는다.
+
+`reviewDone`이 `true`이면 §1부터 정상 진행.
+
 ## 1. 전제
 
 - 선행 stage 발행 여부를 확인하되, 미완료 stage가 있어도 hard 종료하지 않는다 — 보고에 ⚠ 표시 후 계속 진행.
@@ -41,7 +53,6 @@ yeoboya-publish-notion 호출:
   work: <작업번호>
   mode: "dispatch"
   key: "finish-work"
-  title: ""
   markdown: ""
   properties:
     iOS_완료: true       # workspace.platform === "iOS"일 때만 포함
@@ -51,6 +62,16 @@ yeoboya-publish-notion 호출:
 두 boolean 모두 본인 플랫폼만 토글한다. 다른 플랫폼의 boolean은 건드리지 않는다 — 다른 플랫폼 작업자가 자기 finish-work에서 자기 boolean을 켤 책임.
 
 ## 5. 종결 보고 출력
+
+`.workflow/<작업번호>/code-phases.json`을 Read 시도.
+
+- 파일이 없으면: `▸ 코드 작성 phase: (미실행)` 한 줄만 출력.
+- 파일이 있으면: `phases` 오브젝트의 키를 순서대로 순회하며 각 status 기준 출력:
+  - `"done"`        → `    ✓ <phase명>`
+  - `"in-progress"` → `    ⚠ <phase명> (진행 중)`
+  - `"todo"`        → `      <phase명> (미완료)`
+
+출력 예시 — 2/4 완료:
 
 ```
 [<작업번호>] <작업명> — <workType 한국어 라벨> 종결 보고
@@ -64,9 +85,10 @@ yeoboya-publish-notion 호출:
     ✓ 데이터 흐름도 · 통신 명세서
     ✓ QA 시나리오
 ▸ 코드 작성 phase:
-    ✓ data
-    ✓ domain
-    ✓ presentation
+    ✓ api-client
+    ✓ repository
+    ⚠ view-model (진행 중)
+      ui (미완료)
 ▸ 경고: <0 또는 ⚠ 항목>
 
 작업이 종결되었습니다.

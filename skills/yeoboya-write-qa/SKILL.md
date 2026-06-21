@@ -57,7 +57,6 @@ yeoboya-publish-notion 호출:
   work: <작업번호>
   mode: "dispatch"
   key: "write-qa"
-  title: "QA 시나리오"
   markdown: <본문>
 ```
 

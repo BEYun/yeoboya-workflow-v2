@@ -74,3 +74,15 @@ test('resolveKey maps "기획서 검토" → write-policy-feedback', () => {
 test('resolveKey maps "통신 명세서" → draw-data-flow', () => {
   assert.equal(notion.resolveKey('통신 명세서'), 'draw-data-flow');
 });
+
+test('KEY_TO_TITLE is exported from notion', () => {
+  assert.ok(typeof notion.KEY_TO_TITLE === 'object' && notion.KEY_TO_TITLE !== null);
+});
+
+test('KEY_TO_TITLE draw-data-flow has exactly 2 titles', () => {
+  assert.deepEqual(notion.KEY_TO_TITLE['draw-data-flow'], ['데이터 흐름도', '통신 명세서']);
+});
+
+test('KEY_TO_TITLE write-policy has exactly 1 title', () => {
+  assert.deepEqual(notion.KEY_TO_TITLE['write-policy'], ['정책서']);
+});

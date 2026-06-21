@@ -1,0 +1,19 @@
+{
+  "TITLE_TO_KEY": {
+    "기획서 검토":   "write-policy-feedback",
+    "정책서":        "write-policy",
+    "도메인 명세서": "write-domain",
+    "UI 흐름도":     "draw-ui-flow",
+    "데이터 흐름도": "draw-data-flow",
+    "통신 명세서":   "draw-data-flow",
+    "QA 시나리오":   "write-qa"
+  },
+  "KEY_TO_TITLE": {
+    "write-policy-feedback": ["기획서 검토"],
+    "write-policy":          ["정책서"],
+    "write-domain":          ["도메인 명세서"],
+    "draw-ui-flow":          ["UI 흐름도"],
+    "draw-data-flow":        ["데이터 흐름도", "통신 명세서"],
+    "write-qa":              ["QA 시나리오"]
+  }
+}

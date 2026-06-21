@@ -46,7 +46,6 @@ yeoboya-publish-notion 호출:
   work: <작업번호>
   mode: "dispatch"
   key: "write-domain"
-  title: "도메인 명세서"
   markdown: <본문>
 ```
 
