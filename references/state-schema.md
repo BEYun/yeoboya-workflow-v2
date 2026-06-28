@@ -11,6 +11,7 @@ This document is the **single source of truth** for state file schemas and share
   "name": "라이브 방송 검색",
   "referenceWork": "DCL-1230",
   "reviewDone": false,
+  "codeBaseSha": "a1b2c3d4",
   "links": {
     "write-policy":   "abc...",
     "draw-data-flow": { "데이터 흐름도": "p1...", "통신 명세서": "p2..." }
@@ -22,28 +23,34 @@ This document is the **single source of truth** for state file schemas and share
 - `links`: **작성자와 무관하게** 이 작업의 정식 Notion 문서 링크. 키 존재 = 그 문서가 Notion에 존재함. 단일 페이지 → pageId 문자열, 다중 페이지(draw-data-flow) → `{ "<페이지 제목>": "<pageId>" }`. **권위 출처는 Notion(작업 row의 자식 페이지)이며 work.json.links는 그 캐시/인덱스**다. `notion-page-record` hook이 세션 내 생성 페이지를 즉시 기록(fast path)하고, `sync-links`가 작업 row 자식 페이지 전체와 reconcile(authoritative path)한다.
 - `referenceWork`: workType이 update이고 사용자가 참고 작업을 선택했을 때만 존재. 라벨 전용.
 - `reviewDone`: `false`로 초기화. `review-code` 완료 시 `true`로 갱신. `finish-work` 진입 유일 하드 선행조건.
+- `codeBaseSha`: write-code가 하네스 `work` 호출 직전 `git rev-parse HEAD`로 기록하는 **코드 작업 시작 SHA**(커밋 없으면 `null`). 재개 시 덮어쓰지 않는다. review-code/finish-work가 `codeBaseSha..HEAD` range로 이 작업의 커밋을 수집하는 기준점. `null`이면 `git log --grep='[<작업번호>]'` legacy 경로로 대체.
 - stages/status 개념 없음. 초기화 시 `links: {}`.
 
-## 2. `.workflow/<작업번호>/code-phases.json`
+## 2. `.workflow/<작업번호>/plan.md`
 
-Tracks write-code's internal phase progress. Owned by `yeoboya-write-code`.
+write-code가 산출하고 하네스 `work`이 입력으로 받는 **코드 작업 계획서**. write-code가 소유하며, work은 이를 읽어 plan-reviewer(7축)·TDD·완료기준 검증을 수행한다. (이전의 phase 기반 진행 추적 방식을 대체 — phase 개념은 폐기됐고 진행 상태는 work이 `.harness/runs/run-{id}.md`로 관리한다.)
 
-```json
-{
-  "currentPhase": "repository",
-  "phases": {
-    "api-client":  { "status": "done" },
-    "repository":  { "status": "in-progress" },
-    "view-model":  { "status": "todo" },
-    "ui":          { "status": "todo" }
-  }
-}
+고정 섹션:
+
+```markdown
+## 요구사항
+<work.json.name + 선행 Notion 산출물(정책서/도메인/데이터 흐름도) 요약>
+
+## 참고 코드
+<@경로 목록 — 하네스 모듈 CLAUDE.md 포함>
+
+## 완료기준
+- [ ] <자연어 또는 실행 명령 — work이 TESTING.md 기준으로 명령 번역>
+- [ ] ...
+
+## 플랫폼
+<iOS | Android — workspace.platform>
+
+## 커밋 규약
+이 작업의 모든 커밋은 `[<작업번호>]` prefix로 시작한다.
 ```
 
-`phases[<key>].status` ∈ {`todo`, `in-progress`, `done`}.
-code-phases는 write-code 내부 phase 추적 전용이며, work.json에는 phase 상태를 두지 않는다.
-
-**주의**: phase 키는 write-code Phase Derivation 단계에서 동적으로 결정된다. 고정 값 없음.
+plan.md 존재 = write-code가 이미 계획을 세우고 work에 위임을 시작했음(첫 호출 vs 재개의 분기 신호). 진행/완료 상태는 plan.md에 두지 않는다.
 
 ## 3. `.workflow/workspace.json`
 
@@ -53,6 +60,7 @@ code-phases는 write-code 내부 phase 추적 전용이며, work.json에는 phas
   "platform": "iOS",
   "worker": "윤병은",
   "activeWork": "DCL-1234",
+  "harness": { "bootstrapped": true, "checkedAt": "2026-06-28" },
   "notion": {
     "workDbDataSourceUrl": "https://...",
     "workerPageId": "abc...",
@@ -62,6 +70,7 @@ code-phases는 write-code 내부 phase 추적 전용이며, work.json에는 phas
 ```
 
 `activeWork`: most recently started or resumed work. Updated by `create-work` and `route-work`. Used by `session-resume` hook.
+`harness.bootstrapped`: setup-workspace가 현재 repo의 하네스 문서(CLAUDE.md + docs/CONVENTIONS.md + docs/rules/TESTING.md, 그리고 TESTING.md 테스트 명령 비어있지 않음) 존재를 **1회 확인**한 결과. `true`여야 write-code가 `work`을 호출한다. 다른 스킬은 이 플래그만 읽고 repo를 재스캔하지 않는다. `checkedAt`은 `TZ=Asia/Seoul date +%Y-%m-%d`(감사용, 선택).
 
 Notion MCP is a required prerequisite for v2; there is no `notion.mode` field.
 
@@ -98,9 +107,7 @@ WORK_LABELS = {
 
 WORKTYPE_LABEL = { feature: "신규 개발", update: "변경/고도화", bugfix: "버그 수정" }
 
-# CODE_PHASES
-# write-code Phase Derivation에서 동적 결정. 고정 상수 없음.
-# 각 작업의 phase 구성은 .workflow/<작업번호>/code-phases.json 참조.
+# write-code는 phase 상수를 두지 않는다. 코드 작업은 하네스 `work` 닫힌 루프에 위임된다.
 ```
 
 `TITLE_TO_KEY`는 `notion-page-record` hook에서 페이지 제목 → work-list 키 추론에 쓰인다. `draw-data-flow`는 두 페이지("데이터 흐름도", "통신 명세서")가 같은 키로 매핑되며, 두 페이지(데이터 흐름도/통신 명세서)의 pageId가 `links['draw-data-flow']` 객체에 누적된다.
