@@ -1,6 +1,6 @@
 ---
 name: yeoboya-write-qa
-description: "yeoboya-route-work이 이 작업목록 항목을 trigger할 때만 사용한다. 직접 호출 금지. 이전 산출물(UI 흐름도, 데이터 흐름도, write-code 커밋)로부터 QA 시나리오를 도출한다: 골든 패스, 엣지 케이스, 회귀. 자체 검증한 뒤 'Notion QA 시나리오'를 게시한다."
+description: "yeoboya-select-subtask이 이 세부 작업을 trigger할 때만 사용한다. 직접 호출 금지. 이전 산출물(UI 흐름도, 데이터 흐름도, write-code 커밋)로부터 QA 시나리오를 도출한다: 골든 패스, 엣지 케이스, 회귀. 자체 검증한 뒤 'Notion QA 시나리오'를 게시한다."
 user-invocable: false
 ---
 
@@ -65,5 +65,5 @@ yeoboya-publish-notion 호출:
 
 ```
 QA 시나리오 작성 완료. 다음 권장 단계: QA 버그 수정 (발견된 게 있다면) 또는 작업 종결.
-새 세션에서 /yeoboya-route-work을 호출하세요.
+새 세션에서 /yeoboya-select-subtask을 호출하세요.
 ```

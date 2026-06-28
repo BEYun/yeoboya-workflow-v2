@@ -1,6 +1,6 @@
 ---
 name: yeoboya-write-domain
-description: "yeoboya-route-work이 이 작업목록 항목을 trigger할 때만 사용한다. 직접 호출 금지. Notion에서 정책서를 가져와, 도메인 객체/규칙/액터/이벤트 모델링을 사용자와 함께 진행하고, 자체 검증을 실행한 뒤, title='도메인 명세서'로 yeoboya-publish-notion을 호출한다."
+description: "yeoboya-select-subtask이 이 세부 작업을 trigger할 때만 사용한다. 직접 호출 금지. Notion에서 정책서를 가져와, 도메인 객체/규칙/액터/이벤트 모델링을 사용자와 함께 진행하고, 자체 검증을 실행한 뒤, title='도메인 명세서'로 yeoboya-publish-notion을 호출한다."
 user-invocable: false
 ---
 
@@ -56,5 +56,5 @@ properties는 비워둠 (작업명/도메인/담당자 변경 없음).
 
 ```
 도메인 명세서 작성 완료. 다음 권장 단계: UI 흐름도.
-새 세션에서 /yeoboya-route-work을 호출하세요.
+새 세션에서 /yeoboya-select-subtask을 호출하세요.
 ```
