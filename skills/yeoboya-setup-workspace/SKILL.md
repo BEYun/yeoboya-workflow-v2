@@ -31,7 +31,6 @@ plugin v2는 다음 설치가 필요합니다:
 
 prerequisite 통과 후, 현재 repo에 하네스 문서가 있는지 **1회** 확인한다. work 닫힌 루프는 `docs/rules/TESTING.md`(완료기준 명령 단일 출처)와 `CONVENTIONS`/`ARCHITECTURE`(검토 기준)에 의존한다.
 
-````markdown
 ```bash
 ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 if [ -f "$ROOT/CLAUDE.md" ] && [ -f "$ROOT/docs/CONVENTIONS.md" ] \
@@ -41,7 +40,6 @@ else
   echo "NOT_BOOTSTRAPPED"
 fi
 ```
-````
 
 - `BOOTSTRAPPED` → workspace.json의 `harness.bootstrapped = true`로 기록(§3).
 - `NOT_BOOTSTRAPPED` → `harness.bootstrapped = false`로 기록하고 아래 안내 출력. workspace.json 작성은 계속 진행한다(셋업 자체는 막지 않음).
