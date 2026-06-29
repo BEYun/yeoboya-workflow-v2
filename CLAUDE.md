@@ -25,7 +25,7 @@
 
 `links`의 권위 출처는 Notion(작업 row의 자식 페이지)이고 work.json.links는 캐시다. 문서 세부작업 스킬은 진입 시 `yeoboya-publish-notion mode="sync-links"`로 links를 동기화하며, 매칭·쓰기는 `hooks/lib/sync-links.js`(결정적 node)가 수행한다.
 
-진행 상태(stage status)·파이프라인 개념은 없다. 세부작업 목록은 **workType별로 다르다** (feature/update 10개·동일 메뉴 구성·라벨 작성↔수정 — 단 update는 4개 문서 스킬(write-policy/write-domain/draw-ui-flow/draw-data-flow)이 이전 버전 fetch + 변경 이력을 추가한다(state-schema §6), bugfix 6개 — 기획·설계 없이 `진단`(버그 분석→QA 시나리오)). 그룹 `테스트`는 `QA 대응`으로 개명. 그래도 세부 작업은 순서·선행조건 없이 자유 선택된다(아래 게이트 제외). 세부 작업이 "실행됨"인지는 `links`에 키가 존재하는지로만 판단하며, 별도 상태값을 두지 않는다. Notion 링크·메타데이터는 로컬(work.json), 산출물 본문은 Notion이 SOT.
+진행 상태(stage status)·파이프라인 개념은 없다. 세부작업 목록은 **workType별로 다르다** (feature/update 10개·동일 메뉴 구성·라벨 작성↔수정 — 단 update는 4개 문서 스킬(write-policy/write-domain/draw-ui-flow/draw-data-flow)이 이전 노션 문서 복사 기반 수정(분기 A) 또는 코드베이스 기반 산출(분기 B) 중 하나로 처리하고 이전 버전 출처(provenance)를 명시한다(state-schema §6), bugfix 6개 — 기획·설계 없이 `진단`(버그 분석→QA 시나리오)). 그룹 `테스트`는 `QA 대응`으로 개명. 그래도 세부 작업은 순서·선행조건 없이 자유 선택된다(아래 게이트 제외). 세부 작업이 "실행됨"인지는 `links`에 키가 존재하는지로만 판단하며, 별도 상태값을 두지 않는다. Notion 링크·메타데이터는 로컬(work.json), 산출물 본문은 Notion이 SOT.
 
 ## skill 호출 규약
 
