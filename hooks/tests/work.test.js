@@ -67,6 +67,35 @@ test('recordLink multi-page accumulates { title: pageId }', () => {
   assert.deepEqual(after.links['draw-data-flow'], { '데이터 흐름도': 'p-1', '통신 명세서': 'p-2' });
 });
 
+test('recordLink versioned write-policy-feedback accumulates { title: pageId } per version', () => {
+  const root = tmpRoot();
+  const f = workFile(root, 'DCL-PF');
+  fs.mkdirSync(path.dirname(f), { recursive: true });
+  fs.writeFileSync(f, JSON.stringify({ work: 'DCL-PF', links: {} }));
+  work.recordLink(root, 'DCL-PF', 'write-policy-feedback', 'p-v6', { title: '기획서 검토 - v0.6' });
+  work.recordLink(root, 'DCL-PF', 'write-policy-feedback', 'p-v7', { title: '기획서 검토 - v0.7' });
+  const after = JSON.parse(fs.readFileSync(f, 'utf8'));
+  assert.deepEqual(after.links['write-policy-feedback'], {
+    '기획서 검토 - v0.6': 'p-v6',
+    '기획서 검토 - v0.7': 'p-v7',
+  });
+});
+
+test('syncLinks accumulates versioned write-policy-feedback pages keyed by full title', () => {
+  const root = tmpRoot();
+  const f = workFile(root, 'DCL-PF2');
+  fs.mkdirSync(path.dirname(f), { recursive: true });
+  fs.writeFileSync(f, JSON.stringify({ work: 'DCL-PF2', links: {} }));
+  const links = work.syncLinks(root, 'DCL-PF2', [
+    { title: '기획서 검토 - v0.6', id: 'p-v6' },
+    { title: '기획서 검토 - v0.7', id: 'p-v7' },
+  ]);
+  assert.deepEqual(links['write-policy-feedback'], {
+    '기획서 검토 - v0.6': 'p-v6',
+    '기획서 검토 - v0.7': 'p-v7',
+  });
+});
+
 test('syncLinks maps child titles to keys and writes links', () => {
   const root = tmpRoot();
   const f = workFile(root, 'DCL-2');

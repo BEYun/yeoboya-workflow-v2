@@ -2,7 +2,7 @@
 
 const fs = require('node:fs');
 const path = require('node:path');
-const { resolveKey, KEY_TO_TITLE } = require('./notion');
+const { resolveKey, isMultiPageKey } = require('./notion');
 
 function workspacePath(root) {
   return path.join(root, '.workflow', 'workspace.json');
@@ -64,11 +64,6 @@ function safeWriteWork(root, work, data) {
   }
 }
 
-function isMultiKey(key) {
-  const titles = KEY_TO_TITLE[key];
-  return Array.isArray(titles) && titles.length > 1;
-}
-
 function setLink(links, key, pageId, multiTitle) {
   if (!multiTitle) {
     links[key] = pageId;
@@ -97,7 +92,7 @@ function syncLinks(root, work, children) {
     const title = typeof c.title === 'string' ? c.title : '';
     const key = resolveKey(title);
     if (!key) continue;
-    setLink(w.links, key, c.id, isMultiKey(key) ? title.trim() : null);
+    setLink(w.links, key, c.id, isMultiPageKey(key) ? title.trim() : null);
   }
   return safeWriteWork(root, work, w) ? w.links : null;
 }

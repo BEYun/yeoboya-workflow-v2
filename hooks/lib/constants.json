@@ -22,5 +22,17 @@
     "draw-data-flow":        ["데이터 흐름도", "통신 명세서"],
     "write-qa":              ["QA 시나리오"],
     "analyze-bug":           ["버그 분석"]
+  },
+  "KEY_TO_ROW_HEADING": {
+    "write-policy-feedback": ["기획서 검토 결과"],
+    "write-policy":          ["정책서"],
+    "write-domain":          ["도메인 명세서"],
+    "draw-ui-flow":          ["UI 흐름도"],
+    "draw-data-flow":        ["데이터 흐름도", "통신 명세서"],
+    "write-qa":              ["QA 시나리오"],
+    "analyze-bug":           ["버그 분석"]
+  },
+  "VERSIONED_TITLE_PREFIXES": {
+    "write-policy-feedback": "기획서 검토"
   }
 }

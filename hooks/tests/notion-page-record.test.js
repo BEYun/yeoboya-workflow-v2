@@ -93,11 +93,25 @@ test('multi-page 두 번째(통신 명세서) → 두 제목 누적', () => {
   assert.deepEqual(after.links['draw-data-flow'], { '데이터 흐름도': 'p-dataflow', '통신 명세서': 'p-comm' });
 });
 
-test('기획서 검토 → links[write-policy-feedback] 기록', () => {
+test('기획서 검토(레거시 무버전 제목) → links[write-policy-feedback] 다중 페이지 기록', () => {
+  // write-policy-feedback is versioned: links are { title: pageId }, even for
+  // the legacy version-less "기획서 검토" title.
   const root = tmpRoot();
   const wf = setupWork(root, {});
   const inp = createPagesPayload([{ title: '기획서 검토', markdown: '...' }]);
   runHook(root, { ...inp, tool_response: createPagesResponse(['p-fb']) });
   const after = JSON.parse(fs.readFileSync(wf, 'utf8'));
-  assert.equal(after.links['write-policy-feedback'], 'p-fb');
+  assert.deepEqual(after.links['write-policy-feedback'], { '기획서 검토': 'p-fb' });
+});
+
+test('기획서 검토 - 버전별 제목 → links[write-policy-feedback] 버전 누적', () => {
+  const root = tmpRoot();
+  const wf = setupWork(root, { links: { 'write-policy-feedback': { '기획서 검토 - v0.6': 'p-v6' } } });
+  const inp = createPagesPayload([{ title: '기획서 검토 - v0.7', markdown: '...' }]);
+  runHook(root, { ...inp, tool_response: createPagesResponse(['p-v7']) });
+  const after = JSON.parse(fs.readFileSync(wf, 'utf8'));
+  assert.deepEqual(after.links['write-policy-feedback'], {
+    '기획서 검토 - v0.6': 'p-v6',
+    '기획서 검토 - v0.7': 'p-v7',
+  });
 });

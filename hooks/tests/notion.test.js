@@ -115,6 +115,24 @@ test('resolveKey maps "통신 명세서" → draw-data-flow', () => {
   assert.equal(notion.resolveKey('통신 명세서'), 'draw-data-flow');
 });
 
+test('resolveKey maps versioned "기획서 검토 - v0.7" → write-policy-feedback (prefix)', () => {
+  assert.equal(notion.resolveKey('기획서 검토 - v0.7'), 'write-policy-feedback');
+  assert.equal(notion.resolveKey('기획서 검토 - 2026-06-30 draft'), 'write-policy-feedback');
+});
+
+test('resolveKey does NOT match the row heading "기획서 검토 결과"', () => {
+  // The heading_2 lives on the row body, not as a child page; it must never
+  // resolve to a key (otherwise sync-links would mis-record it).
+  assert.equal(notion.resolveKey('기획서 검토 결과'), undefined);
+});
+
+test('isMultiPageKey: versioned + fixed-multi keys are multi, single keys are not', () => {
+  assert.equal(notion.isMultiPageKey('write-policy-feedback'), true); // versioned
+  assert.equal(notion.isMultiPageKey('draw-data-flow'), true);        // 2 fixed titles
+  assert.equal(notion.isMultiPageKey('write-policy'), false);         // single
+  assert.equal(notion.isMultiPageKey('write-qa'), false);            // single
+});
+
 test('KEY_TO_TITLE is exported from notion', () => {
   assert.ok(typeof notion.KEY_TO_TITLE === 'object' && notion.KEY_TO_TITLE !== null);
 });

@@ -21,7 +21,7 @@
 | 산출물 본문 (정책서/흐름도/QA 등) | Notion |
 | 워크스페이스 설정 | 로컬 `.workflow/workspace.json` |
 
-연결 규칙: `work.json.links[<key>]`로 세부작업과 Notion 산출물을 연결한다. 다중 페이지 세부작업(draw-data-flow)은 `links[<key>][<페이지 제목>]`.
+연결 규칙: `work.json.links[<key>]`로 세부작업과 Notion 산출물을 연결한다. 다중 페이지 세부작업(draw-data-flow)은 `links[<key>][<페이지 제목>]`. 버전드 세부작업(write-policy-feedback)도 같은 다중 구조로, 기획서 버전마다 `"기획서 검토 - <버전>"` 새 페이지를 만들어 `links[<key>][<전체 제목>]`에 누적한다(단일 페이지 update 아님 — `VERSIONED_TITLE_PREFIXES`, state-schema §4 / notion-schema §1).
 
 `links`의 권위 출처는 Notion(작업 row의 자식 페이지)이고 work.json.links는 캐시다. 문서 세부작업 스킬은 진입 시 `yeoboya-publish-notion mode="sync-links"`로 links를 동기화하며, 매칭·쓰기는 `hooks/lib/sync-links.js`(결정적 node)가 수행한다.
 

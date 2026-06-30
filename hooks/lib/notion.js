@@ -2,8 +2,13 @@
 
 const {
   NOTION_TOOL_NAMES, TITLE_TO_KEY: TITLE_TO_KEY_OBJ, KEY_TO_TITLE,
+  VERSIONED_TITLE_PREFIXES,
 } = require('./constants.json');
 const TITLE_TO_KEY = new Map(Object.entries(TITLE_TO_KEY_OBJ));
+// Keys whose pages are versioned: one page per planning-doc version, titled
+// "<prefix> - <version>". They accumulate as multi-page links (one entry per
+// full title) instead of overwriting a single page.
+const VERSIONED = VERSIONED_TITLE_PREFIXES || {};
 
 // Notion MCP tools are named `mcp__<server>__<toolName>`. The server segment
 // varies by how the connector was registered (readable name vs claude.ai's
@@ -31,7 +36,24 @@ function isNotionWriteTool(toolName) {
 
 function resolveKey(title) {
   if (typeof title !== 'string') return undefined;
-  return TITLE_TO_KEY.get(title.trim());
+  const t = title.trim();
+  const exact = TITLE_TO_KEY.get(t);
+  if (exact) return exact;
+  // Versioned titles ("기획서 검토 - v0.7") match by prefix. Require the
+  // " -" separator so sibling headings like "기획서 검토 결과" never match.
+  for (const key of Object.keys(VERSIONED)) {
+    const prefix = VERSIONED[key];
+    if (t === prefix || t.startsWith(prefix + ' -')) return key;
+  }
+  return undefined;
+}
+
+// A key is multi-page when it has >1 fixed title (draw-data-flow) or it is
+// versioned (write-policy-feedback). Multi-page links store { title: pageId }.
+function isMultiPageKey(key) {
+  const titles = KEY_TO_TITLE[key];
+  if (Array.isArray(titles) && titles.length > 1) return true;
+  return Object.prototype.hasOwnProperty.call(VERSIONED, key);
 }
 
 function normalizeTitle(raw) {
@@ -89,7 +111,9 @@ module.exports = {
   notionToolKind,
   TITLE_TO_KEY,
   KEY_TO_TITLE,
+  VERSIONED_TITLE_PREFIXES: VERSIONED,
   resolveKey,
+  isMultiPageKey,
   extractPagesFromInput,
   extractPageIds,
 };

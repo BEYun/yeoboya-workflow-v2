@@ -128,6 +128,23 @@ SUBTASK_LABELS = {
 # 런타임 정의: hooks/lib/constants.json (단일 SOT). analyze-bug↔"버그 분석" 포함.
 # 변경 시 해당 파일만 수정한다.
 
+# KEY_TO_ROW_HEADING
+# 런타임 정의: hooks/lib/constants.json (단일 SOT). KEY_TO_TITLE와 같은 인덱스 정렬의
+# 병렬 배열. 산출물 자식 페이지를 작업 DB row에 publish할 때, row 본문에서 그 자식 페이지
+# '위에' 놓을 제목2(heading_2) 텍스트다(notion-schema §1, publish-notion §4). 값은 대개
+# KEY_TO_TITLE과 동일하나 write-policy-feedback만 "기획서 검토 결과"로 다르다. 다중(고정) 페이지
+# 키(draw-data-flow)는 각 제목별로 자기 제목2를 가진다. 버전드 키(write-policy-feedback)는
+# 모든 버전 페이지가 단일 제목2("기획서 검토 결과") 하나를 공유한다(제목2 존재 여부로 멱등 삽입).
+
+# VERSIONED_TITLE_PREFIXES
+# 런타임 정의: hooks/lib/constants.json (단일 SOT). { key: 제목 접두사 }. 이 키의 산출물은
+# 기획서 '버전마다 새 페이지'를 만든다(단일 페이지 update 아님). 페이지 제목은
+# "<접두사> - <버전>"(예 "기획서 검토 - v0.7"). 현재 write-policy-feedback="기획서 검토" 하나.
+# - resolveKey(notion.js): 정확 매칭 실패 시 이 접두사로 매칭(제목 === 접두사 또는 "<접두사> -"로
+#   시작). 따라서 형제 제목2 "기획서 검토 결과"는 매칭되지 않는다(접두사+" -" 미일치).
+# - isMultiPageKey(notion.js): 버전드 키는 다중 페이지로 취급 → links[key][전체제목]에 버전별 누적
+#   (draw-data-flow의 {title:id}와 동일 구조). 같은 버전 재게시만 해당 페이지 update.
+
 # NOTION_TOOL_NAMES = { search: "notion-search", createPages: "notion-create-pages", updatePage: "notion-update-page" }
 # 런타임 정의: hooks/lib/constants.json (단일 SOT).
 # Notion MCP 도구는 mcp__<server>__<toolName> 구조이고 <server> 접두사는 커넥터마다

@@ -2,14 +2,10 @@
 'use strict';
 
 const {
-  isNotionWriteTool, resolveKey, extractPagesFromInput, extractPageIds, KEY_TO_TITLE,
+  isNotionWriteTool, resolveKey, extractPagesFromInput, extractPageIds, isMultiPageKey,
 } = require('./lib/notion');
 const { readStdin, allow, log } = require('./lib/hook-runtime');
 const { readActiveWork, recordLink } = require('./lib/work');
-
-const MULTI_PAGE_KEY_TITLES = Object.fromEntries(
-  Object.entries(KEY_TO_TITLE).filter(([, titles]) => titles.length > 1)
-);
 
 (async () => {
   const root = process.env.DEV_ROOT || process.cwd();
@@ -44,7 +40,7 @@ const MULTI_PAGE_KEY_TITLES = Object.fromEntries(
       log({ hook: 'page-record', event: 'skip', reason: 'unknown-title', title });
       continue;
     }
-    const multi = MULTI_PAGE_KEY_TITLES[key] ? { title } : undefined;
+    const multi = isMultiPageKey(key) ? { title } : undefined;
     const ok = recordLink(root, work, key, ids[i], multi);
     if (ok) {
       log({ hook: 'page-record', event: 'capture', key, title, pageId: ids[i] });

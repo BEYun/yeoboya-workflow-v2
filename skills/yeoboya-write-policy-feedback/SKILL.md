@@ -22,6 +22,8 @@ user-invocable: false
      - Notion 페이지 URL
    ```
 2. PDF면 Read 도구로 페이지 단위 읽기. Notion이면 `notion-fetch`.
+3. **검토 대상 표기**: PDF는 **파일명만** 기록한다(개인정보 보호 — 디렉터리/절대경로 노출 금지). 예: 입력 `/Users/yun/Desktop/DCL-0000-기획서.pdf` → 문서에는 `DCL-0000-기획서.pdf`. Notion이면 페이지 link.
+4. **기획서 버전 수집(필수)**: 이 검토 페이지의 제목·구분에 쓸 버전 라벨을 정한다. 파일명/문서 헤더/내용에서 버전(예: `v0.7`, `v0.6 draft`)을 **자동 추정해 제안**하고 사용자에게 확인받는다. 추정 불가하면 직접 질문한다. 이 버전은 매번 다르며, **버전마다 별도의 검토 페이지가 생성**된다(이전 검토를 덮어쓰지 않음).
 
 ## 3. 작성 절차
 
@@ -34,11 +36,13 @@ user-invocable: false
 4. **마크다운 작성** — `references/policy-feedback-template.md` 구조에 맞춤.
    - Critical은 이슈별 세부 표 (페이지/원문/문제/권고)
    - Major/Minor는 단일 표 (# / 페이지 / 관점 / 이슈 / 원문)
-   - ID 패턴: `C#`/`M#`/`N#`
+   - **정렬(세 우선순위 공통)**: 1순위 페이지 오름차순(p.숫자), 2순위 관점. Critical은 이슈별 표를 이 순서로 나열, Major/Minor는 표의 행을 이 순서로 정렬. ID 번호(`C#`/`M#`/`N#`)는 정렬된 순서대로 부여.
 
 ## 4. Self-validation (publish 직전)
 
-- [ ] 검토 대상에 출처(PDF 파일명 또는 Notion link) + 페이지 수 명시
+- [ ] 페이지 제목이 `기획서 검토 - <버전>` 형식 (버전 라벨 포함)
+- [ ] 검토 대상에 출처(PDF 파일명 — 경로/디렉터리 없이 파일명만, 또는 Notion link) + 페이지 수 명시
+- [ ] Critical/Major/Minor 표가 페이지 오름차순 → 관점 순으로 정렬됨
 - [ ] 검토 관점 5종 모두 명시
 - [ ] 검토 결과 요약 표에 Critical/Major/Minor 건수 (0건이라도 명시)
 - [ ] Critical이 있으면 각 이슈가 페이지/원문/문제/권고 4행 표
@@ -54,11 +58,12 @@ yeoboya-publish-notion 호출:
   work: <작업번호>
   mode: "dispatch"
   key: "write-policy-feedback"
+  title: "기획서 검토 - <버전>"        # 버전드 키 — 전체 제목 필수 전달 (예: "기획서 검토 - v0.7")
   markdown: <위에서 작성한 마크다운>
   properties: { workType: <workType>, 작업명: <name>, 도메인: <도메인 or 생략> }
 ```
 
-publish 후 notion-page-record hook이 work.json.links['write-policy-feedback']에 pageId를 자동 기록한다.
+write-policy-feedback은 **버전드 키**다(`VERSIONED_TITLE_PREFIXES`). 매 버전마다 새 페이지가 생성되고(같은 버전 재게시만 update), 모두 row 본문의 단일 제목2 `"기획서 검토 결과"` 아래에 누적된다. publish 후 notion-page-record hook이 `work.json.links['write-policy-feedback'][<전체 제목>]`에 pageId를 자동 기록한다(버전별 누적).
 
 ## 6. 종료 안내
 
