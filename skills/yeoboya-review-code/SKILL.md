@@ -11,6 +11,7 @@ user-invocable: false
 ## 1. 전제
 
 - work.json 존재.
+- `work.json.codeWriteDone === true` 전제 — select-subtask이 review-code 진입 시 하드 게이트로 보장한다(없으면 진입 차단). 본 스킬은 별도로 재확인하지 않는다.
 - 리뷰 대상 코드(git 커밋)가 있으면 진행한다.
 - `work.json.codeBaseSha`(write-code가 하네스 work 호출 직전 기록한 코드 시작 SHA)를 §2 diff 수집의 기준점으로 쓴다. 없거나 `null`이면 legacy 경로(`git log --grep`)로 대체한다.
 

@@ -37,7 +37,11 @@ user-invocable: true
 | 조건 | 마커 |
 |---|---|
 | `work.json.links`에 해당 키 존재 | ✓ |
+| 키가 `write-code` 또는 `fix-bug`이고 `work.json.codeWriteDone === true` | ✓ |
+| 키가 `review-code`이고 `work.json.codeReviewDone === true` | ✓ |
 | 그 외 | (공백) |
+
+코드 세부작업(`write-code`/`fix-bug`/`review-code`)은 Notion 산출물이 없어 `links`에 키가 생기지 않으므로, 그 완료는 boolean 플래그(`codeWriteDone`/`codeReviewDone`, state-schema §1)로만 ✓ 표시된다.
 
 추천 마커(▶)는 없다. 모든 세부 작업은 동등하게 나열된다.
 
@@ -122,6 +126,18 @@ user-invocable: true
 
 이 블록(codeReviewDone 확인)은 workType에 무관하게 항상 하드 블록이다. (write-code 게이트(§6)의 하드 블록은 feature 한정인 것과 구분된다.)
 
+**코드 리뷰 전용 선행 확인** (세부 작업 이름이 `review-code`로 매칭된 후, trigger 전):
+
+`work.json.codeWriteDone`을 확인한다.
+- `false`(또는 부재)이면 즉시 하드 블록:
+  ```
+  코드 작성이 완료되지 않았습니다. 코드 작성(feature/update) 또는 버그 수정(bugfix)을 먼저 완료해 주세요.
+  ```
+  메뉴(§4)로 복귀. "네/아니요" 게이트 없음.
+- `true`이면 기존 흐름대로 trigger.
+
+이 블록(codeWriteDone 확인)도 workType에 무관하게 항상 하드 블록이다. `codeWriteDone`은 `write-code`(work 완료) 또는 `fix-bug`(버그 수정 완료)가 기록한다.
+
 ## 6. 진입 게이트
 
 ### 6.1 write-code 필수 문서 (대상이 `write-code`일 때만)
@@ -180,3 +196,5 @@ trigger 전:
 - 선택한 키가 현재 workType의 `SUBTASK_GROUPS[<workType>]`에 **노출되는 키**인지 검증(`SUBTASK_LIST` 등록부 + workType 뷰 양쪽). 노출되지 않는 키면 trigger 금지.
 - 대상이 `write-code`이면 §6.1 절차(sync-links 실행 → 필수 집합 검사)를 수행했는지 검증. feature인데 필수 3종이 동기화된 links에 모두 존재하지 않으면 trigger 금지.
 - 대상이 `write-qa`이고 `workType=bugfix`이면 §6.2 경고를 거쳤는지 검증.
+- 대상이 `review-code`이면 §5 코드 리뷰 전용 선행 확인(`codeWriteDone === true`)을 수행했는지 검증. `false`/부재면 trigger 금지.
+- 대상이 `finish-work`이면 §5 작업 종결 전용 선행 확인(`codeReviewDone === true`)을 수행했는지 검증.

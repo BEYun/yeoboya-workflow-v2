@@ -98,9 +98,19 @@ work이 계획 검토(plan-reviewer) → TDD → 통합/E2E 작성 → 완료기
 
 `plan.md`가 이미 존재하면: brainstorming·plan.md 작성·codeBaseSha 기록을 **모두 생략**하고 §3.5(work 호출)만 수행한다. work이 `.harness/runs/run-*.md`의 미완료 run을 찾아 "재개/신규"를 사용자에게 물어 이어받는다.
 
-## 5. 종료 안내
+## 5. 종료
 
-work이 완료(모든 완료기준 통과)를 보고하면:
+### 5.1 codeWriteDone 기록 (완료 보고 시에만)
+
+work이 **모든 완료기준 통과**를 보고했을 때에만:
+
+`.workflow/<작업번호>/work.json`을 Read → `codeWriteDone` 필드를 `true`로 설정 → Write.
+
+이 플래그가 `review-code` 진입 하드 선행조건이자 select-subtask 완료 마커(✓)의 근거다(state-schema §1). work이 도중 중단(harness-check 사람 게이트, bug-fix 한도 등)된 경우에는 **기록하지 않는다**(미완료 유지 — 재개로 이어진다).
+
+### 5.2 종료 안내
+
+work이 완료를 보고하면:
 
 ```
 코드 작업 완료 (work 닫힌 루프 종료).
@@ -108,7 +118,7 @@ work이 완료(모든 완료기준 통과)를 보고하면:
 새 세션에서 /yeoboya-select-subtask을 호출하세요.
 ```
 
-work이 도중 중단(harness-check 사람 게이트, bug-fix 한도 등)되면 work의 보고를 그대로 사용자에게 전달하고, 재개는 `/yeoboya-select-subtask → write-code`(§4)로 안내한다.
+work이 도중 중단(harness-check 사람 게이트, bug-fix 한도 등)되면 work의 보고를 그대로 사용자에게 전달하고(`codeWriteDone` 미기록), 재개는 `/yeoboya-select-subtask → write-code`(§4)로 안내한다.
 
 ## 6. Self-validation
 

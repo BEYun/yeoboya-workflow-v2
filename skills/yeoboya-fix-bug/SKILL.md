@@ -37,7 +37,15 @@ user-invocable: false
 - [ ] 수정 + 테스트가 별도 커밋 (TDD라면) 또는 한 커밋이라도 메시지에 명시
 - [ ] 회귀 가능성을 사용자에게 한 번 명시 (영향받을 수 있는 기능 목록)
 
-## 5. 종료 안내
+## 5. codeWriteDone 기록
+
+버그 수정+테스트가 끝나면 (커밋 직후):
+
+`.workflow/<작업번호>/work.json`을 Read → `codeWriteDone` 필드를 `true`로 설정 → Write.
+
+이 플래그가 `review-code` 진입 하드 선행조건이자 select-subtask 완료 마커(✓)의 근거다(state-schema §1). bugfix에는 Notion 산출물이 없는 코드 세부작업이므로 `links`에 키가 생기지 않아 이 플래그가 완료를 나타내는 유일한 수단이다.
+
+## 6. 종료 안내
 
 버그 수정 완료 후:
 

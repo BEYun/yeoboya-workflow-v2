@@ -10,6 +10,7 @@ This document is the **single source of truth** for state file schemas and share
   "workType": "feature",
   "name": "라이브 방송 검색",
   "referenceWork": "DCL-1230",
+  "codeWriteDone": false,
   "codeReviewDone": false,
   "codeBaseSha": "a1b2c3d4",
   "links": {
@@ -22,7 +23,8 @@ This document is the **single source of truth** for state file schemas and share
 - `workType` ∈ {`feature`, `update`, `bugfix`} — create-work 라벨 + **select-subtask 세부작업 뷰 분기 키**(`SUBTASK_GROUPS`/`SUBTASK_LABELS` §4). 그 외 분기에는 쓰지 않는다.
 - `links`: **작성자와 무관하게** 이 작업의 정식 Notion 문서 링크. 키 존재 = 그 문서가 Notion에 존재함. 단일 페이지 → pageId 문자열, 다중 페이지(draw-data-flow) → `{ "<페이지 제목>": "<pageId>" }`. **권위 출처는 Notion(작업 row의 자식 페이지)이며 work.json.links는 그 캐시/인덱스**다. `notion-page-record` hook이 세션 내 생성 페이지를 즉시 기록(fast path)하고, `sync-links`가 작업 row 자식 페이지 전체와 reconcile(authoritative path)한다.
 - `referenceWork`: workType이 update이고 사용자가 참고 작업을 선택했을 때만 존재. create-work 라벨 표시 + **update 수정 스킬의 이전 버전 참고 입력**(§6). 선택은 옵션이므로 update여도 없을 수 있다. 해석은 로컬 캐시가 아니라 Notion 권위 출처(referenceWork row 자식 페이지)로 한다(§6).
-- `codeReviewDone`: `false`로 초기화. `review-code` 완료 시 `true`로 갱신. `finish-work` 진입 유일 하드 선행조건.
+- `codeWriteDone`: `false`로 초기화. 코드 작성/수정 세부작업 완료 직후 `true`로 갱신 — `write-code`는 하네스 `work` 닫힌 루프가 모든 완료기준 통과를 보고했을 때, bugfix의 `fix-bug`는 버그 수정+테스트가 끝났을 때. `review-code` 진입 **하드 선행조건**이자 select-subtask 완료 마커(✓)의 근거. `links`에 키가 생기지 않는 코드 세부작업(Notion 산출물 없음)의 완료를 표시하는 유일한 수단이다.
+- `codeReviewDone`: `false`로 초기화. `review-code` 완료 시 `true`로 갱신. `finish-work` 진입 하드 선행조건. (`codeWriteDone`과 함께 boolean 플래그 기반 하드 선행조건은 이 둘뿐이다 — `codeWriteDone`→review-code, `codeReviewDone`→finish-work.)
 - `codeBaseSha`: write-code가 하네스 `work` 호출 직전 `git rev-parse HEAD`로 기록하는 **코드 작업 시작 SHA**(커밋 없으면 `null`). 재개 시 덮어쓰지 않는다. review-code/finish-work가 `codeBaseSha..HEAD` range로 이 작업의 커밋을 수집하는 기준점. `null`이면 `git log --grep='[<작업번호>]'` legacy 경로로 대체.
 - stages/status 개념 없음. 초기화 시 `links: {}`.
 
@@ -176,7 +178,7 @@ WORKTYPE_LABEL = { feature: "신규 개발", update: "변경/고도화", bugfix:
 
 라벨이 `작성→수정`으로 바뀌는 **문서 산출 4개 스킬**(`write-policy`, `write-domain`, `draw-ui-flow`, `draw-data-flow`)은 workType=update일 때 본 산출물을 **이전 노션 문서 복사 기반 수정(분기 A)** 또는 **코드베이스 기반 산출(분기 B)** 둘 중 하나로 처리한다. 순수 신규 작성(B-fallback)은 없다. 이 규칙의 정의는 여기 1곳뿐이며 각 스킬 본문은 이를 참조한다(중복 정의 금지).
 
-**책임 위치**: 각 스킬 §1 전제 / §2 입력 fetch. `select-subtask`은 관여하지 않는다 — 디스패처의 책임은 §7에서 `referenceWork`를 trigger 컨텍스트로 넘기는 것까지다. 이 부재 처리는 **항상 소프트**다(유일한 하드 게이트 = write-code 필수문서 + codeReviewDone, 불변).
+**책임 위치**: 각 스킬 §1 전제 / §2 입력 fetch. `select-subtask`은 관여하지 않는다 — 디스패처의 책임은 §7에서 `referenceWork`를 trigger 컨텍스트로 넘기는 것까지다. 이 부재 처리는 **항상 소프트**다(하드 게이트 = write-code 필수문서 + codeWriteDone→review-code + codeReviewDone→finish-work, 불변).
 
 **개념 분리**: content seed(내용 출발점) = 후보 해석. provenance(이전 버전 출처 명시) = seed의 실제 기원. 자기 재publish로 seed를 가져와도 `referenceWork`가 있으면 provenance는 referenceWork를 유지한다(혈통은 재실행과 무관).
 
