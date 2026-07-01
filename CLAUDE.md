@@ -22,6 +22,7 @@
 | 코드 작업 시작 기준점 | `work.json.codeBaseSha` (review-code/finish-work의 range 수집 기준) |
 | 산출물 본문 (정책서/흐름도/QA 등) | Notion |
 | 워크스페이스 설정 | 로컬 `.workflow/workspace.json` |
+| 워크플로우 마찰(불편) 기록 | 로컬 `.workflow/improvement-log.jsonl` (gitignore, append-only. `/yeoboya-insights`가 소비) |
 
 연결 규칙: `work.json.links[<key>]`로 세부작업과 Notion 산출물을 연결한다. 다중 페이지 세부작업(draw-data-flow)은 `links[<key>][<페이지 제목>]`. 버전드 세부작업(write-policy-feedback)도 같은 다중 구조로, 기획서 버전마다 `"기획서 검토 - <버전>"` 새 페이지를 만들어 `links[<key>][<전체 제목>]`에 누적한다(단일 페이지 update 아님 — `VERSIONED_TITLE_PREFIXES`, state-schema §4 / notion-schema §1).
 
@@ -38,7 +39,7 @@
 
 ## 스킬 호출 규약
 
-- **user-invocable 진입은 3개**: `/yeoboya-setup-workspace`, `/yeoboya-create-work`, `/yeoboya-select-subtask`
+- **user-invocable 진입은 4개**: `/yeoboya-setup-workspace`, `/yeoboya-create-work`, `/yeoboya-select-subtask`, `/yeoboya-insights`(마찰 로그 분석 — 세부작업 아님, select-subtask 흐름 밖의 독립 도구)
 - 세부작업 스킬은 모두 `user-invocable: false`. `select-subtask`이 Skill 도구로 trigger한다
 - **세부작업 단위 세션 분리 권장**: 세부작업 완료 후 새 세션에서 `/yeoboya-select-subtask` 재호출
 - **write-code 진입 게이트**: `select-subtask`이 write-code trigger 직전 `sync-links`로 links를 최신화한 뒤 필수 문서 집합(`{정책서, UI 흐름도, 데이터 흐름도}`)을 검사한다. **workType=feature는 하나라도 없으면 하드 블록**, update/bugfix는 경고 후 진행 가능.

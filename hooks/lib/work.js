@@ -59,6 +59,10 @@ function safeWriteWork(root, work, data) {
       const { log } = require('./hook-runtime');
       log({ hook: 'work', event: 'write-error', work, message: String(e?.message || e) });
     } catch {}
+    try {
+      const { logFriction } = require('./friction');
+      logFriction(root, { workNo: work, category: 'session-break', severity: 'blocker', what: 'work.json 쓰기 실패 — 진행 상태 유실 위험', source: 'hook' });
+    } catch {}
     process.stderr.write(`[work] write failed: ${e?.message || e}\n`);
     return false;
   }

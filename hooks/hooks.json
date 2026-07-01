@@ -4,10 +4,7 @@
       {
         "matcher": "startup|resume|clear",
         "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-resume.js"
-          }
+          { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/session-resume.js" }
         ]
       }
     ],
@@ -15,10 +12,14 @@
       {
         "matcher": "mcp__.+__notion-(create-pages|update-page)",
         "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/notion-page-record.js"
-          }
+          { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/notion-page-record.js" }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks/friction-recover.js" }
         ]
       }
     ]
