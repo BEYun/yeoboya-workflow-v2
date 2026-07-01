@@ -1,2 +1,5 @@
 docs/
 .superpowers/
+.workflow/improvement-log.jsonl
+.workflow/.friction-session/
+.workflow/insights.html
