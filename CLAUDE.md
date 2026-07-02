@@ -64,7 +64,7 @@
 hooks/lib 의 결정적 node 로직(sync-links, notion, work, swagger-extract, hook-runtime 등)은 `hooks/tests/`에 테스트가 있다. package.json 없음 — node 내장 러너로 직접 실행한다:
 
 ```bash
-node --test hooks/tests/*.test.js   # 전체 (65 tests). 디렉터리형 `node --test hooks/tests/`는 파일을 못 잡아 실패하니 glob 필수
+node --test hooks/tests/*.test.js   # 전체 (103 tests). 디렉터리형 `node --test hooks/tests/`는 파일을 못 잡아 실패하니 glob 필수
 ```
 
 스킬/agent 본문은 markdown 이라 테스트 대상이 아니다. 상수·라벨·스키마 변경 시 `references/state-schema.md`(SOT)와 `hooks/lib/constants.json`을 함께 갱신하고 위 테스트를 돌린다.
