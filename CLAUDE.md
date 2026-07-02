@@ -12,6 +12,8 @@
 
 단, **플래그를 쓰는 주체는 오직 setup-workspace다**. `harness-root`는 문서만 생산하고 `bootstrapped`를 건드리지 않으며, write-code 등 다른 스킬은 이 플래그를 **읽기만** 하고 repo를 재스캔하지 않는다(state-schema §3). 따라서 harness-root 실행 후에는 반드시 `/yeoboya-setup-workspace`를 **다시 호출**해 문서 존재를 재검증해야 `bootstrapped=true`로 확정된다.
 
+**디자인/API 연동 (선택적)**: write-code는 첫 호출 시 디자인·API 컨텍스트를 받아 `plan.md`에 주입한다(코드 생성 아님 — `work`이 이 컨텍스트로 구현). 디자인 툴 MCP(**Figma/Zeplin**)는 **선택적 연동**이다 — setup-workspace가 서비스별로 사용 툴을 물어 `workspace.json.design`에 기록하며 **하드 차단이 아니다**(3대 선행조건과 구분). Swagger API 스펙은 사내망이라 WebFetch가 아닌 로컬 `curl`로 취득한다(`hooks/lib/swagger-extract.js` 헬퍼, URL은 write-code에서 작업마다 입력). 설계: `docs/superpowers/specs/2026-07-02-write-code-design-api-context-design.md`.
+
 ## SOT 분리
 
 | 데이터 | SOT |
@@ -59,7 +61,7 @@
 
 ## 개발/테스트
 
-hooks/lib 의 결정적 node 로직(sync-links, notion, work, hook-runtime 등)은 `hooks/tests/`에 테스트가 있다. package.json 없음 — node 내장 러너로 직접 실행한다:
+hooks/lib 의 결정적 node 로직(sync-links, notion, work, swagger-extract, hook-runtime 등)은 `hooks/tests/`에 테스트가 있다. package.json 없음 — node 내장 러너로 직접 실행한다:
 
 ```bash
 node --test hooks/tests/*.test.js   # 전체 (65 tests). 디렉터리형 `node --test hooks/tests/`는 파일을 못 잡아 실패하니 glob 필수
