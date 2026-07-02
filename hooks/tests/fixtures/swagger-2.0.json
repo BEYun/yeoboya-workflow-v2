@@ -1,0 +1,32 @@
+{
+  "swagger": "2.0",
+  "info": { "title": "Sample", "version": "1.0" },
+  "paths": {
+    "/users/{id}": {
+      "get": {
+        "summary": "사용자 조회",
+        "responses": { "200": { "schema": { "$ref": "#/definitions/User" } } }
+      }
+    },
+    "/users": {
+      "post": {
+        "summary": "사용자 생성",
+        "parameters": [
+          { "in": "body", "name": "body", "schema": { "$ref": "#/definitions/CreateUser" } }
+        ],
+        "responses": { "201": { "schema": { "$ref": "#/definitions/User" } } }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "required": ["id"],
+      "properties": { "id": { "type": "integer" }, "name": { "type": "string" } }
+    },
+    "CreateUser": {
+      "type": "object",
+      "properties": { "name": { "type": "string" } }
+    }
+  }
+}
