@@ -6,6 +6,7 @@ const path = require('node:path');
 const VALID_CATEGORY = new Set([
   'gate-block', 'wrong-guidance', 'schema-mismatch',
   'ambiguous-form', 'session-break', 'tool-error', 'user-correction',
+  'spec-change',
 ]);
 const VALID_SEVERITY = new Set(['blocker', 'friction', 'nit']);
 
