@@ -61,10 +61,10 @@
 
 ## 개발/테스트
 
-hooks/lib 의 결정적 node 로직(sync-links, notion, work, swagger-extract, hook-runtime 등)은 `hooks/tests/`에 테스트가 있다. package.json 없음 — node 내장 러너로 직접 실행한다:
+hooks/lib 의 결정적 node 로직(sync-links, notion, work, swagger-extract, hook-runtime 등)은 `hooks/tests/`에 테스트가 있다. 추가로 `templates.test.js`가 4개 산출물 템플릿(정책서·도메인·UI 흐름도·데이터 흐름도의 `references/*-template.md`) 구조를 검증한다 — 각 템플릿에 `이전 버전:` provenance 라인 + `## 변경 이력` 제목(§ 번호 없이) + `참고본` 열이 있어야 한다. package.json 없음 — node 내장 러너로 직접 실행한다:
 
 ```bash
 node --test hooks/tests/*.test.js   # 전체 (103 tests). 디렉터리형 `node --test hooks/tests/`는 파일을 못 잡아 실패하니 glob 필수
 ```
 
-스킬/agent 본문은 markdown 이라 테스트 대상이 아니다. 상수·라벨·스키마 변경 시 `references/state-schema.md`(SOT)와 `hooks/lib/constants.json`을 함께 갱신하고 위 테스트를 돌린다.
+스킬 SKILL.md·agent 본문(산문)은 테스트 대상이 아니지만, 위 4개 산출물 템플릿은 `templates.test.js`가 구조를 강제한다 — 템플릿의 후행 메타 섹션(정책서 미정 항목·변경 이력)에 § 번호를 붙이거나 `참고본` 열을 빼면 테스트가 실패한다. 상수·라벨·스키마 변경 시 `references/state-schema.md`(SOT)와 `hooks/lib/constants.json`을 함께 갱신하고 위 테스트를 돌린다.
