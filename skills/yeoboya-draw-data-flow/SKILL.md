@@ -44,10 +44,11 @@ user-invocable: false
 `references/comm-spec-template.md`를 직접 따른다.
 
 1. 채널 정의 — 페이로드 봉투 형식, 인증 정책
-2. API endpoint 카탈로그 — `/<도메인명>/<리소스>` 규약 + [확정]/[논의중] 상태
-3. Socket cmd 카탈로그 — 발신자/payload + [확정]/[논의중] 상태
+2. API endpoint 카탈로그 — 메타데이터 표(액션 ID/Method/Endpoint/상태/비고, `/<도메인명>/<리소스>` 규약) + 표 아래 endpoint별 Request/Response 코드 블럭
+3. Socket cmd 카탈로그 — 메타데이터 표(ID/cmd명/발신자/상태/비고) + 표 아래 cmd별 Payload 코드 블럭
 
 API endpoint는 데이터 흐름도 액션·채널 매트릭스의 API 행과 1:1, Socket cmd는 Socket 행과 1:1.
+Request/Response/Payload는 예외 없이 코드 블럭(```json)으로 감싼다 — 표 셀이나 인라인 텍스트에 직접 기술하지 않는다.
 
 ## 4. Self-validation (publish 직전)
 
@@ -70,8 +71,10 @@ API endpoint는 데이터 흐름도 액션·채널 매트릭스의 API 행과 1:
 - [ ] 페이지 제목 = "통신 명세서"
 - [ ] 데이터 흐름도 link footnote 존재
 - [ ] 채널 정의 표 1행 이상
-- [ ] 각 API endpoint가 `/<도메인명>/<리소스>` 컨벤션 준수
-- [ ] 각 endpoint/cmd에 상태 ([확정] 또는 [논의중]) 명시
+- [ ] API endpoint 카탈로그가 메타데이터 표 형태 (표 행마다 Method/Endpoint가 `/<도메인명>/<리소스>` 컨벤션 준수)
+- [ ] Socket cmd 카탈로그가 메타데이터 표 형태
+- [ ] 각 endpoint/cmd 표 행에 상태 ([확정] 또는 [논의중]) 명시
+- [ ] 표에 등장하는 모든 endpoint/cmd마다 표 아래 Request/Response(또는 Payload) 코드 블럭 존재 — 코드가 표 셀이나 인라인 텍스트로 대체되지 않음
 - [ ] 데이터 흐름도 액션·채널 매트릭스의 모든 `메서드/이벤트명`이 본 페이지에 등장 (1:1 매핑)
 - [ ] 본 페이지에 등장하는 모든 endpoint/cmd가 데이터 흐름도에서 사용됨 (역방향 검증)
 
