@@ -17,7 +17,7 @@ user-invocable: false
 ## 2. 입력 fetch
 
 - UI 흐름도 + 도메인 명세서 fetch
-- UI 흐름도의 §2 사용자 액션 표에서 모든 액션 ID 추출
+- UI 흐름도 §1 화면·액션 통합 표의 "사용자 액션" 열에서 모든 액션 ID 추출
 - **workType=update 이전 버전 해석** — `references/state-schema.md §6` 규칙대로 이전 데이터 흐름도/통신 명세서를 해석한다(자기 재publish, 또는 `referenceWork`의 동종 문서를 Notion 권위 출처로 해석 — 다중 페이지 키이므로 두 제목 모두 매칭). **후보 있음(분기 A)** → 두 페이지 fetch. **후보 없음(분기 B)** → §6대로 기준 모듈/파일 경로를 사용자에게 요청해 코드베이스 기반 산출. provenance는 §6 표대로 헤더 + 변경 이력에 기록.
 
 ## 3. 작성 절차
@@ -30,13 +30,13 @@ user-invocable: false
 
 `references/data-flow-template.md`를 직접 따른다.
 
-1. 정책서 §페르소나 + UI 흐름도 §2 액션 정의를 fetch
+1. 정책서 §페르소나 + UI 흐름도 §1 화면·액션 통합 표를 fetch
 2. 페르소나 인벤토리 — 정책서 §페르소나 그대로
 3. 엔터티 책임 매트릭스 — 도메인 명세서 §1의 모든 엔터티에 대해 상태 주체 선언
 4. (optional) 상태 모델 동기화 메모 — 도메인과 같으면 "동일", 다르면 대응표
 5. 각 페르소나별로:
    - 시퀀스 다이어그램 (actor/FE/BE/DB participants, rect로 단계 그룹)
-   - 액션·채널 매트릭스 (Action ID는 UI 흐름도 §2에서 재사용, Event ID는 본 페이지에서 신규 정의)
+   - 액션·채널 매트릭스 (Action ID는 UI 흐름도 §1 화면·액션 통합 표에서 재사용, Event ID는 본 페이지에서 신규 정의)
 6. **변경 이력** (workType=update, `references/state-schema.md §6`) — 데이터 흐름도(parent) 페이지의 §변경 이력에 기록한다. 이전 버전이 있으면 이번 수정 1행 추가, 이전 버전 없이 신규로 진행한 경우 첫 행을 `최초 작성`으로 기록.
 
 ### 3.2 통신 명세서 작성
@@ -60,7 +60,7 @@ API endpoint는 데이터 흐름도 액션·채널 매트릭스의 API 행과 1:
 - [ ] 상태 모델 동기화 메모 — "동일" 또는 대응표
 - [ ] 각 페르소나가 시퀀스 다이어그램 + 액션·채널 매트릭스 모두 존재
 - [ ] 시퀀스 다이어그램에 actor/FE/BE/DB participants 모두 등장
-- [ ] 액션·채널 매트릭스의 `Action ID`가 UI 흐름도 §2에 존재
+- [ ] 액션·채널 매트릭스의 `Action ID`가 UI 흐름도 §1 화면·액션 통합 표에 존재
 - [ ] 액션·채널 매트릭스의 `Event ID`는 패턴 `<페르소나>:Event:N` + 페르소나별 unique
 - [ ] (workType=update) 데이터 흐름도 페이지에 §변경 이력 1행 이상 (분기 B 코드베이스 산출 시 첫 행 `최초 작성`)
 - [ ] (workType=update) provenance — 데이터 흐름도 헤더 "이전 버전" + 변경 이력 `참고본`이 §6 표와 일치 (referenceWork 번호 / `코드베이스: <경로>` / `—`)
