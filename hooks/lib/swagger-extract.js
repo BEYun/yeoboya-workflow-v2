@@ -1,5 +1,7 @@
 'use strict';
 
+const { execFileSync } = require('node:child_process');
+
 const HTTP_METHODS = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options'];
 
 function schemaDefs(spec) {
@@ -135,4 +137,38 @@ function parseSwagger(spec, opts = {}) {
   return out.join('\n');
 }
 
-module.exports = { parseSwagger, refName, schemaDefs };
+function fetchSwaggerSpec(url, opts = {}) {
+  const runner =
+    opts.runner ||
+    ((u) => execFileSync('curl', ['-sS', '-f', u], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 }));
+  const raw = runner(url);
+  try {
+    return JSON.parse(raw);
+  } catch (e) {
+    throw new Error('Swagger 응답이 JSON이 아닙니다: ' + (e && e.message));
+  }
+}
+
+function main(argv) {
+  const [url, ...endpoints] = argv;
+  if (!url) {
+    process.stderr.write('usage: node swagger-extract.js <swagger-url> [endpoint-filter ...]\n');
+    process.exitCode = 2;
+    return;
+  }
+  let spec;
+  try {
+    spec = fetchSwaggerSpec(url);
+  } catch (e) {
+    process.stderr.write('Swagger fetch 실패: ' + (e && e.message) + '\n');
+    process.exitCode = 1;
+    return;
+  }
+  process.stdout.write(parseSwagger(spec, { endpoints }) + '\n');
+}
+
+if (require.main === module) {
+  main(process.argv.slice(2));
+}
+
+module.exports = { parseSwagger, fetchSwaggerSpec, refName, schemaDefs };

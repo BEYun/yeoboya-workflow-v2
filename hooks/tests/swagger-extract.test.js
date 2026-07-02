@@ -43,3 +43,17 @@ test('parseSwagger: 참조된 DTO가 없으면 안내를 낸다', () => {
   assert.match(md, /`GET \/ping`/);
   assert.match(md, /참조된 DTO 없음/);
 });
+
+test('fetchSwaggerSpec: runner 주입으로 JSON을 파싱한다 (네트워크 없음)', () => {
+  const spec = swagger.fetchSwaggerSpec('http://intranet/api-docs', {
+    runner: () => JSON.stringify({ swagger: '2.0', paths: {} })
+  });
+  assert.equal(spec.swagger, '2.0');
+});
+
+test('fetchSwaggerSpec: 비-JSON 응답이면 명확히 실패한다', () => {
+  assert.throws(
+    () => swagger.fetchSwaggerSpec('http://x', { runner: () => '<html>error</html>' }),
+    /JSON이 아닙니다/
+  );
+});
